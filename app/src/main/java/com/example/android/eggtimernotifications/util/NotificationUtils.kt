@@ -31,7 +31,7 @@ import com.example.android.eggtimernotifications.receiver.SnoozeReceiver
 // Notification ID.
 private val NOTIFICATION_ID = 0
 private val REQUEST_CODE = 0
-private val FLAGS = 0
+// private val FLAGS = 0 // Flag one shot is PendingIntent.FLAG_ONE_SHOT NOT 0
 
 // TODO: Step 1.1 extension function to send messages (GIVEN)
 /**
@@ -64,7 +64,16 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .bigPicture(bitMapImage)
         .bigLargeIcon(null)
     // TODO: Step 2.2 add snooze action
-
+    val snoozeIntent: Intent = Intent(
+        applicationContext,
+        SnoozeReceiver::class.java
+    )
+    val snoozePendingIntent: PendingIntent = PendingIntent.getBroadcast(
+        applicationContext,
+        REQUEST_CODE,
+        snoozeIntent,
+        PendingIntent.FLAG_ONE_SHOT
+    )
     // TODO: Step 1.2 get an instance of NotificationCompat.Builder
     // Build the notification
     val notificationBuilder = NotificationCompat.Builder(
@@ -84,8 +93,14 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setStyle(bigPicStyle)
         .setLargeIcon(bitMapImage)
         // TODO: Step 2.3 add snooze action
-
+        .addAction(
+            R.drawable.egg_icon,
+            applicationContext.getString(R.string.snooze),
+            snoozePendingIntent
+        )
         // TODO: Step 2.5 set priority
+        // Support for devices previous to 26 API level, 25 and before
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
 
     // TODO: Step 1.4 call notify
     // this.notify(NOTIFICATION_ID, notificationBuilder.build())
@@ -97,6 +112,4 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
  * Cancels all notifications.
  *
  */
-fun NotificationManager.cancelNotifications() {
-    cancelAll()
-}
+fun NotificationManager.cancelNotifications() = cancelAll()

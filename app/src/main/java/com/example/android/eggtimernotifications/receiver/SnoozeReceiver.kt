@@ -26,6 +26,7 @@ import android.os.SystemClock
 import android.text.format.DateUtils
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 
 class SnoozeReceiver: BroadcastReceiver() {
     private val REQUEST_CODE = 0
@@ -47,6 +48,16 @@ class SnoozeReceiver: BroadcastReceiver() {
             triggerTime,
             notifyPendingIntent
         )
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
+
+        // Second option
+//        val notificationManager = ContextCompat.getSystemService(
+//            context,
+//            NotificationManager::class.java
+//        ) as NotificationManager
+//        notificationManager.cancelAll()
     }
 
 }
